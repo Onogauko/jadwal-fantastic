@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#EDEEE8">
+<title>Dashboard Jadwal Harian — Fantastic 4</title>
+<style>
+:root{--ink:#1E2422;--ink-soft:#63685F;--paper:#EDEEE8;--panel:#FAFAF7;--border:#DAD7CC}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input{font:inherit}.app{min-height:100vh;padding:26px 18px 60px}.shell{max-width:1020px;margin:auto}
+.top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:16px}
+.title{font-size:24px;font-weight:700;margin:0;letter-spacing:-.01em}.sub{color:var(--ink-soft);font-size:13px;margin-top:4px}
+.tools{display:flex;gap:8px}.btn,.icon-btn,.arrow,.today,.tab{cursor:pointer}
+.icon-btn,.arrow,.today{border:1px solid var(--border);background:var(--panel);border-radius:7px;color:var(--ink)}
+.icon-btn{padding:7px 10px;font-size:12.5px}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tab{border:1px solid var(--border);background:var(--panel);border-radius:20px;padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--ink-soft)}
+.tab.active{background:var(--ink);color:var(--panel);border-color:var(--ink)}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.datehead{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;flex-wrap:wrap}.daylabel{font-size:28px;font-weight:750}.datesub{color:var(--ink-soft);font-size:14px}
+.nav{display:flex;align-items:center;gap:6px;margin-bottom:18px}.arrow{width:32px;height:32px;display:grid;place-items:center;flex-shrink:0}.strip{display:flex;gap:6px;overflow:auto;flex:1}
+.strip-day{min-width:52px;text-align:center;padding:6px 4px;border-radius:8px;cursor:pointer;color:var(--ink-soft);border:1px solid transparent}
+.strip-day .n{display:block;font-weight:700;font-size:15px;color:var(--ink)}.strip-day.active{background:var(--ink);color:var(--panel)}.strip-day.active .n{color:var(--panel)}
+.today{height:32px;padding:0 12px;font-size:12.5px;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}.stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.stat .v{font-size:26px;font-weight:750;line-height:1}.stat .l{font-size:11.5px;color:var(--ink-soft);margin-top:6px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 18px 8px;margin-bottom:16px}.panel h2{font-size:14px;margin:0 0 14px;font-weight:650}
+.team-block{margin-bottom:18px}.team-heading{display:flex;align-items:center;gap:2px;font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);margin-bottom:8px}
+.ruler{display:flex;margin-left:150px;margin-bottom:6px}.ruler span{flex:1;font-size:10px;color:var(--ink-soft)}.ruler span:last-child{flex:0}
+.row{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--border);cursor:pointer}.row:hover{background:rgba(0,0,0,.025)}
+.row-name{width:140px;flex-shrink:0;font-size:13px;font-weight:650}.track{position:relative;flex:1;height:26px;background:repeating-linear-gradient(90deg,var(--border) 0,var(--border) 1px,transparent 1px,transparent calc(100% / 6));border-radius:5px}
+.bar{position:absolute;top:2px;bottom:2px;border-radius:5px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:750;white-space:nowrap;overflow:hidden;color:#fff}
+.tag-list{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:14px}.tag{border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12.5px;cursor:pointer;background:var(--paper)}.tag.muted{color:var(--ink-soft)}
+.team-mini{font-size:10.5px;color:var(--ink-soft);margin-left:4px}.empty{padding:10px 0 16px;color:var(--ink-soft);font-size:13px}
+.overlay{position:fixed;inset:0;background:rgba(30,36,34,.35);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:12px;width:100%;max-width:400px;padding:20px;position:relative;box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.modal h3{margin:0 0 3px;font-size:16px}.close{position:absolute;right:14px;top:14px;border:0;background:transparent;cursor:pointer;color:var(--ink-soft)}
+.code-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:14px 0 12px}.code-btn{border:1px solid var(--border);background:var(--paper);border-radius:8px;padding:8px 6px;cursor:pointer;font-size:12.5px;font-weight:750}.code-btn .t{display:block;font-weight:400;font-size:9.5px;color:var(--ink-soft);margin-top:2px}.off-btn{grid-column:span 3;background:#EFE9E4}
+.clear{width:100%;background:transparent;border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12.5px;cursor:pointer;color:#A33}
+.manage-list{max-height:280px;overflow:auto;margin:12px 0}.manage-item{display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid var(--border)}
+.manage-item input{border:1px solid var(--border);border-radius:6px;padding:6px}.manage-item .code{width:52px;text-transform:uppercase}.manage-item .time{width:94px}.del{border:0;background:transparent;color:var(--ink-soft);cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:7px;background:var(--ink);color:var(--panel);padding:9px 13px;font-size:13px;font-weight:600;width:100%}.btn.sec{background:transparent;color:var(--ink);border:1px solid var(--border);margin-bottom:8px}
+@media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}.row{flex-wrap:wrap}.row-name{width:100%}.track{width:100%}.ruler{display:none}.app{padding-left:12px;padding-right:12px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(() => {
+const DEFAULT_CODES=[
+{code:"CF",start:"06:00",end:"14:00",color:"#C98A2C"},{code:"CG",start:"07:00",end:"15:00",color:"#3E5C76"},
+{code:"EF",start:"06:00",end:"12:00",color:"#6B8F71"},{code:"EG",start:"07:00",end:"13:00",color:"#2B2D5E"},
+{code:"CK",start:"11:00",end:"19:00",color:"#8A4F6B"},{code:"CL",start:"12:00",end:"20:00",color:"#4A7A6B"},
+{code:"DN",start:"14:30",end:"22:30",color:"#A85C32"},{code:"FP",start:"16:30",end:"22:30",color:"#5B4A8A"},
+{code:"CM",start:null,end:null,color:"#7A7568"},{code:"CI",start:null,end:null,color:"#5C6E7A"}];
+const TEAM_COLORS={"FC":"#C98A2C","RAMBI":"#3E5C76","ES CREAM":"#6B8F71"};
+const EMP=[
+["FC_WYNDA","WYNDA","FC"],["FC_YOHAN","YOHAN","FC"],["FC_SUCI","SUCI","FC"],["FC_ACA","ACA","FC"],["FC_ALYA","ALYA","FC"],["FC_ERDI","ERDI","FC"],["FC_ALISHA","ALISHA","FC"],
+["RAMBI_BAHRI","BAHRI","RAMBI"],["RAMBI_ZAHRA","ZAHRA","RAMBI"],["RAMBI_NAZRIL","NAZRIL","RAMBI"],["RAMBI_ANISA","ANISA","RAMBI"],["RAMBI_ATIN","ATIN","RAMBI"],
+["EC_BOY","BOY","ES CREAM"],["EC_WYNDA","WYNDA","ES CREAM"],["EC_AAL","AAL","ES CREAM"],["EC_ALINTA","ALINTA","ES CREAM"]
+].map(([id,name,team])=>({id,name,team}));
+const RAW={
+FC_WYNDA:["FP","DN","DN","X","DN","CF","CF","EG","CG","DN","CG","X","DN","DN","FP","DN","DN","X","CF","DN","EG","CF","CG","CG","X","X","DN","DN","FP","DN","DN"],
+FC_YOHAN:["X","CF","CF","EG","CF","X","FP","DN","DN","CM","CG","X","CF","CF","CF","CF","CF","FP","X","EG","DN","DN","DN","DN","FP","X","CF","CF","CF","CF","CF"],
+FC_SUCI:["CF","DN","DN","DN","DN","DN","X","CF","CF","CF","CF","CF","X","FP","DN","DN","DN","EG","DN","X","CF","EG","CF","CF","CF","EG","X","FP","X","DN","DN"],
+FC_ACA:["EG","CG","CG","CF","CG","EG","CG","X","DN","DN","DN","DN","FP","X","CG","CG","X","CF","CG","CF","X","DN","DN","DN","DN","DN","FP","X","EG","CG","CG"],
+FC_ALYA:["DN","X","X","X","CL","X","DN","X","X","X","X","CG","CG","CG","X","X","X","DN","DN","DN","DN","X","X","X","X","DN","X","X","X","X","X"],
+FC_ERDI:["X","X","X","DN","X","DN","X","DN","X","CL","DN","DN","X","X","X","X","CG","X","X","X","X","X","X","X","CG","CF","CG","CG","DN","X","X"],
+FC_ALISHA:["X","CK","CK","X","X","X","X","X","CK","CG","X","X","X","X","CK","CK","CK","X","X","X","X","CK","CK","CK","X","X","X","X","CK","CK","CK"],
+RAMBI_BAHRI:["DN","X","X","DN","DN","X","X","CG","X","X","X","DN","DN","DN","X","DN","X","CF","CF","CF","X","X","X","X","DN","DN","DN","X","X","DN","X"],
+RAMBI_ZAHRA:["CG","DN","DN","X","X","CF","CF","X","DN","DN","DN","X","X","CF","DN","X","X","X","DN","DN","DN","DN","X","X","CF","CF","X","DN","DN","X","X"],
+RAMBI_NAZRIL:["X","X","X","CF","CF","DN","DN","DN","X","X","CF","CF","CF","X","X","X","DN","DN","X","X","CF","X","DN","DN","X","X","CF","CF","X","X","DN"],
+RAMBI_ANISA:["X","CF","CF","X","X","X","X","X","CF","CF","X","X","X","X","CF","CF","CF","X","X","X","X","CF","CF","CF","X","X","X","X","CF","CF","CF"],
+RAMBI_ATIN:["X","X","X","X","X","X","X","X","X","X","X","X","X","CI","CF","CF","CF","X","X","X","X","DN","DN","DN","X","X","X","X","DN","DN","DN"],
+EC_BOY:["X","X","DN","DN","DN","DN","X","X","X","X","DN","DN","DN","X","X","DN","DN","DN","X","CG","CG","X","X","DN","DN","X","CG","CG","X","X","X"],
+EC_WYNDA:["CG","DN","X","CG","CG","X","CG","X","X","X","CG","CG","X","DN","DN","X","X","CG","CG","X","X","DN","DN","X","X","DN","DN","X","X","X","DN"],
+EC_AAL:["X","X","X","X","X","CG","DN","DN","DN","DN","X","X","CG","CG","X","X","X","X","DN","DN","DN","X","X","X","CG","CG","X","DN","DN","DN","X"],
+EC_ALINTA:["X","CG","CG","X","X","X","X","X","CG","CG","X","X","X","X","CG","CG","CG","X","X","X","X","CG","CG","CG","X","X","X","X","CG","CG","CG"]
+};
+const dayNames=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"],dayShort=["Min","Sen","Sel","Rab","Kam","Jum","Sab"];
+const KEY="jadwal-fantastic-4-single-html";
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const fromIso=s=>{let [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const addDays=(s,n)=>{let d=fromIso(s);d.setDate(d.getDate()+n);return iso(d)};
+const startDate=new Date(2026,7,21);
+const dates=Array.from({length:31},(_,i)=>{let d=new Date(startDate);d.setDate(startDate.getDate()+i);return iso(d)});
+let schedule={};EMP.forEach(e=>RAW[e.id].forEach((c,i)=>schedule[e.id+"__"+dates[i]]=c));
+let state={employees:EMP,codes:DEFAULT_CODES,dates,schedule,selected:"2026-08-21",filter:"Semua",editor:null,manager:false};
+try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");if(saved){state={...state,...saved,editor:null,manager:false}}}catch(e){}
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const mins=t=>{if(!t)return 0;let [h,m]=t.split(":").map(Number);return h*60+m};
+const hours=c=>{if(!c?.start||!c?.end)return 0;let m=mins(c.end)-mins(c.start);if(m<=0)m+=1440;return m/60};
+function save(){localStorage.setItem(KEY,JSON.stringify({employees:state.employees,codes:state.codes,dates:state.dates,schedule:state.schedule}))}
+function render(){
+const emps=state.filter==="Semua"?state.employees:state.employees.filter(e=>e.team===state.filter);
+const teams=[...new Set(state.employees.map(e=>e.team))], cmap=Object.fromEntries(state.codes.map(c=>[c.code,c]));
+const groups={};emps.forEach(e=>{(groups[e.team]??={working:[],off:[],none:[]});let c=state.schedule[e.id+"__"+state.selected];if(!c)groups[e.team].none.push(e);else if(c==="X")groups[e.team].off.push(e);else groups[e.team].working.push({emp:e,code:c,def:cmap[c]})});
+Object.values(groups).forEach(g=>g.working.sort((a,b)=>(mins(a.def?.start)||9999)-(mins(b.def?.start)||9999)));
+let working=0,off=0,jam=0;Object.values(groups).forEach(g=>{working+=g.working.length;off+=g.off.length;jam+=g.working.reduce((s,x)=>s+hours(x.def),0)});
+const d=fromIso(state.selected), week=Array.from({length:7},(_,i)=>addDays(state.selected,i-3));
+let out=`<div class="app"><div class="shell">
+<div class="top"><div><h1 class="title">Dashboard Jadwal Harian</h1><div class="sub">👥 ${emps.length} karyawan · ${teams.length} tim</div></div>
+<div class="tools"><button class="icon-btn" data-action="manager">⚙ Kode shift</button></div></div>
+<div class="tabs"><button class="tab ${state.filter==="Semua"?"active":""}" data-filter="Semua">Semua tim</button>
+${teams.map(t=>`<button class="tab ${state.filter===t?"active":""}" data-filter="${esc(t)}"><span class="dot" style="background:${TEAM_COLORS[t]||"#8A8579"}"></span>${esc(t)}</button>`).join("")}</div>
+<div class="datehead"><span class="daylabel">${dayNames[d.getDay()]}</span><span class="datesub">${d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})}</span></div>
+<div class="nav"><button class="arrow" data-action="prev">‹</button><div class="strip">${week.map(s=>{let x=fromIso(s);return `<div class="strip-day ${s===state.selected?"active":""}" data-date="${s}">${dayShort[x.getDay()]}<span class="n">${x.getDate()}</span></div>`}).join("")}</div><button class="arrow" data-action="next">›</button><button class="today" data-action="today">▣ Hari ini</button></div>
+<div class="stats"><div class="stat"><div class="v">${emps.length}</div><div class="l">${state.filter==="Semua"?"Total karyawan":"Karyawan · "+esc(state.filter)}</div></div><div class="stat"><div class="v">${working}</div><div class="l">Sedang bertugas</div></div><div class="stat"><div class="v">${off}</div><div class="l">Libur</div></div><div class="stat"><div class="v">${Math.round(jam*10)/10}j</div><div class="l">Total jam terjadwal</div></div></div>
+<div class="panel"><h2>Garis waktu shift</h2><div class="ruler">${[0,4,8,12,16,20,24].map(h=>`<span>${pad(h)}:00</span>`).join("")}</div>`;
+if(!working) out+=`<div class="empty">Tidak ada karyawan yang bertugas pada hari ini.</div>`;
+else teams.filter(t=>state.filter==="Semua"||t===state.filter).forEach(t=>{let g=groups[t];if(!g?.working.length)return;out+=`<div class="team-block">${state.filter==="Semua"?`<div class="team-heading"><span class="dot" style="background:${TEAM_COLORS[t]||"#8A8579"}"></span>${esc(t)}</div>`:""}${g.working.map(x=>{let has=!!(x.def?.start&&x.def?.end),sm=has?mins(x.def.start):0,em=has?mins(x.def.end):1440;if(em<=sm)em=1440;let left=sm/1440*100,width=Math.max((em-sm)/1440*100,3);return `<div class="row" data-edit="${x.emp.id}"><div class="row-name">${esc(x.emp.name)}</div><div class="track"><div class="bar" style="left:${left}%;width:${width}%;background:${x.def?.color||"#B9B4A6"}">${esc(x.code)}${has?" "+x.def.start+"–"+x.def.end:""}</div></div></div>`}).join("")}</div>`});
+out+=`</div>`;
+if(off)out+=`<div class="panel"><h2>Libur hari ini</h2><div class="tag-list">${teams.filter(t=>state.filter==="Semua"||t===state.filter).flatMap(t=>(groups[t]?.off||[])).map(e=>`<span class="tag" data-edit="${e.id}">${esc(e.name)}${state.filter==="Semua"?`<span class="team-mini">· ${esc(e.team)}</span>`:""}</span>`).join("")}</div></div>`;
+let none=teams.filter(t=>state.filter==="Semua"||t===state.filter).some(t=>groups[t]?.none.length);if(none)out+=`<div class="panel"><h2>Belum dijadwalkan</h2><div class="tag-list">${teams.filter(t=>state.filter==="Semua"||t===state.filter).flatMap(t=>(groups[t]?.none||[])).map(e=>`<span class="tag muted" data-edit="${e.id}">${esc(e.name)}${state.filter==="Semua"?`<span class="team-mini">· ${esc(e.team)}</span>`:""}</span>`).join("")}</div></div>`;
+out+=`</div></div>`;
+if(state.editor)out+=editorModal();if(state.manager)out+=managerModal();document.getElementById("app").innerHTML=out;bind();
+}
+function editorModal(){let e=state.employees.find(x=>x.id===state.editor),d=fromIso(state.selected),cur=state.schedule[e.id+"__"+state.selected];return `<div class="overlay" data-close><div class="modal" data-stop><button class="close" data-action="close">✕</button><h3>${esc(e.name)} · ${esc(e.team)}</h3><div class="sub">${d.toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long"})}</div><div class="code-grid">${state.codes.map(c=>`<button class="code-btn" style="color:${c.color}" data-pick="${esc(c.code)}">${esc(c.code)}<span class="t">${c.start?c.start+"–"+c.end:"kustom"}</span></button>`).join("")}<button class="code-btn off-btn" data-pick="X">X — Libur</button></div>${cur?`<button class="clear" data-pick="">Kosongkan sel</button>`:""}</div></div>`}
+function managerModal(){let local=state.codes;return `<div class="overlay" data-close><div class="modal" data-stop><button class="close" data-action="close">✕</button><h3>Kelola kode shift</h3><div class="sub">Kode "X" selalu berarti libur dan tidak bisa diubah.</div><div class="manage-list">${local.map((c,i)=>`<div class="manage-item"><input class="code" maxlength="3" value="${esc(c.code)}" data-i="${i}" data-f="code"><input class="time" type="time" value="${c.start||""}" data-i="${i}" data-f="start"><span>–</span><input class="time" type="time" value="${c.end||""}" data-i="${i}" data-f="end"><button class="del" data-del="${i}">🗑</button></div>`).join("")}</div><button class="btn sec" data-action="add">＋ Tambah kode</button><button class="btn" data-action="savecodes">Simpan perubahan</button></div></div>`}
+function bind(){document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{state.filter=b.dataset.filter;render()});document.querySelectorAll("[data-date]").forEach(b=>b.onclick=()=>{state.selected=b.dataset.date;render()});document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{state.editor=b.dataset.edit;render()});
+document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>{let a=b.dataset.action;if(a==="prev")state.selected=addDays(state.selected,-1);if(a==="next")state.selected=addDays(state.selected,1);if(a==="today")state.selected=iso(new Date());if(a==="manager")state.manager=true;if(a==="close"){state.editor=null;state.manager=false}if(a==="add"){state.codes.push({code:"",start:"08:00",end:"16:00",color:["#C98A2C","#3E5C76","#6B8F71","#2B2D5E","#8A4F6B","#4A7A6B","#A85C32","#5B4A8A","#7A7568","#3E7A6B"][state.codes.length%10]})}if(a==="savecodes"){state.codes=[...document.querySelectorAll(".manage-item")].map((_,i)=>{let c={...state.codes[i]};document.querySelectorAll(`[data-i="${i}"]`).forEach(x=>c[x.dataset.f]=x.value);c.code=c.code.trim().toUpperCase();return c}).filter(c=>c.code&&c.code!=="X");state.manager=false;save()}render()});
+document.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{let e=state.employees.find(x=>x.id===state.editor),key=e.id+"__"+state.selected;if(b.dataset.pick)state.schedule[key]=b.dataset.pick;else delete state.schedule[key];state.editor=null;save();render()});
+document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{state.codes.splice(+b.dataset.del,1);render()});document.querySelectorAll("[data-close]").forEach(x=>x.onclick=()=>{state.editor=null;state.manager=false;render()});document.querySelectorAll("[data-stop]").forEach(x=>x.onclick=e=>e.stopPropagation())}
+render();
+})();
+</script>
+</body>
+</html>
