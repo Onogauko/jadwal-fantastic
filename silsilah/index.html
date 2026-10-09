@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F4F2EE">
+<title>Silsilah Keluarga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F2EE;--panel:#FFFFFF;--panel-2:#FAF8F5;--ink:#1C1F1E;--ink-soft:#6B6F6A;--border:#E4E0D8;
+  --accent:#2F6B5A;--accent-soft:#E2EEE9;--male:#3F6EA8;--male-soft:#E6EEF8;--female:#B4527A;--female-soft:#F8E8EF;
+  --line:#C9C3B6;--danger:#B23A3A;--shadow:0 1px 2px rgba(28,31,30,.06),0 6px 20px rgba(28,31,30,.06);
+  --dot:rgba(28,31,30,.07);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141716;--panel:#1D2120;--panel-2:#232826;--ink:#ECEDEA;--ink-soft:#9AA09B;--border:#303633;
+  --accent:#6CC1A5;--accent-soft:#1F3530;--male:#7EA8DD;--male-soft:#1E2A38;--female:#E08AAE;--female-soft:#382330;
+  --line:#47504C;--danger:#E07070;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);--dot:rgba(255,255,255,.05);
+}}
+:root[data-theme="dark"]{
+  --bg:#141716;--panel:#1D2120;--panel-2:#232826;--ink:#ECEDEA;--ink-soft:#9AA09B;--border:#303633;
+  --accent:#6CC1A5;--accent-soft:#1F3530;--male:#7EA8DD;--male-soft:#1E2A38;--female:#E08AAE;--female-soft:#382330;
+  --line:#47504C;--danger:#E07070;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);--dot:rgba(255,255,255,.05);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+
+/* Header */
+header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--panel);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.logo{width:38px;height:38px;border-radius:11px;background:var(--accent);display:grid;place-items:center;color:#fff;flex-shrink:0}
+.brand h1{font-family:Fraunces,Georgia,serif;font-size:20px;font-weight:700;margin:0;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:text}
+.brand .sub{font-size:12px;color:var(--ink-soft);margin-top:1px}
+.actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--panel);border-radius:9px;padding:8px 12px;font-size:13px;font-weight:500;white-space:nowrap;transition:background .15s,border-color .15s}
+.btn:hover{background:var(--panel-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.danger{color:var(--danger)}
+.btn.icon{padding:8px;width:36px;justify-content:center}
+.btn svg{width:16px;height:16px;flex-shrink:0}
+
+/* Toolbar */
+.toolbar{display:flex;align-items:center;gap:10px;padding:12px 20px;flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:7px;font-size:13px;font-weight:500;color:var(--ink-soft)}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.search{flex:1;min-width:180px;max-width:340px;position:relative}
+.search input{width:100%;border:1px solid var(--border);background:var(--panel);border-radius:10px;padding:8px 12px 8px 34px;outline:none}
+.search input:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--ink-soft)}
+.results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--panel);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);z-index:30;max-height:300px;overflow:auto;display:none}
+.results.show{display:block}
+.results button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;padding:8px 10px}
+.results button:hover{background:var(--panel-2)}
+.rootsel{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-soft)}
+.rootsel select{border:1px solid var(--border);background:var(--panel);border-radius:9px;padding:7px 10px;max-width:220px}
+.stats{display:flex;gap:18px;margin-left:auto;font-size:12.5px;color:var(--ink-soft)}
+.stats b{color:var(--ink);font-size:15px;margin-right:4px}
+
+/* Main */
+main{flex:1;position:relative;min-height:0;display:flex}
+.viewport{flex:1;position:relative;overflow:hidden;touch-action:none;cursor:grab;background-color:var(--bg);background-image:radial-gradient(var(--dot) 1.2px,transparent 1.2px);background-size:22px 22px}
+.viewport.drag{cursor:grabbing}
+.stage{position:absolute;left:0;top:0;transform-origin:0 0}
+.stage svg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.stage path{fill:none;stroke:var(--line);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.stage path.couple{stroke:var(--accent);stroke-width:2;stroke-dasharray:3 4}
+.zoom{position:absolute;right:16px;bottom:16px;display:flex;flex-direction:column;gap:6px;z-index:5}
+.zoom .btn{box-shadow:var(--shadow)}
+.legend{position:absolute;left:16px;bottom:16px;display:flex;gap:12px;font-size:11.5px;color:var(--ink-soft);background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:6px 10px;z-index:5}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+/* Node card */
+.node{position:absolute;width:188px;height:72px;background:var(--panel);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:10px;padding:0 12px;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s;user-select:none}
+.node::before{content:"";position:absolute;left:-1px;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--g)}
+.node:hover{transform:translateY(-2px);border-color:var(--g)}
+.node.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),var(--shadow)}
+.node.hl{animation:pulse 1.2s ease 2}
+@keyframes pulse{50%{box-shadow:0 0 0 8px var(--accent-soft),var(--shadow)}}
+.node.dead{opacity:.82}
+.node.dead .avatar{filter:grayscale(.8)}
+.node .info{min-width:0}
+.node .nm{font-weight:600;font-size:13px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.node .yr{font-size:11.5px;color:var(--ink-soft);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avatar{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-weight:600;font-size:14px;background:var(--gs);color:var(--g);overflow:hidden;background-size:cover;background-position:center}
+.avatar.lg{width:84px;height:84px;font-size:28px}
+.avatar.sm{width:30px;height:30px;font-size:11px}
+.m{--g:var(--male);--gs:var(--male-soft)}
+.f{--g:var(--female);--gs:var(--female-soft)}
+
+/* List view */
+.list{flex:1;overflow:auto;padding:4px 20px 30px;display:none}
+.list.show{display:block}
+.viewport.hide{display:none}
+.gen-h{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin:18px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.pcard{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:left;width:100%;transition:border-color .15s}
+.pcard:hover{border-color:var(--g)}
+.pcard .meta{font-size:12px;color:var(--ink-soft);margin-top:3px}
+.empty{padding:60px 20px;text-align:center;color:var(--ink-soft)}
+.empty h3{color:var(--ink);font-family:Fraunces,Georgia,serif;font-size:22px;margin:0 0 6px}
+
+/* Drawer */
+.drawer{width:360px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--border);overflow:auto;display:none;position:relative}
+.drawer.show{display:block}
+.drawer .close{position:absolute;right:12px;top:12px}
+.dhead{padding:28px 20px 18px;text-align:center;border-bottom:1px solid var(--border)}
+.dhead .avatar{margin:0 auto 12px}
+.dhead h2{font-family:Fraunces,Georgia,serif;font-size:22px;margin:0;line-height:1.2}
+.dhead .dates{color:var(--ink-soft);font-size:13px;margin-top:6px}
+.chips{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.chip{font-size:11.5px;border-radius:20px;padding:3px 10px;background:var(--panel-2);border:1px solid var(--border);color:var(--ink-soft)}
+.chip.g{background:var(--gs);color:var(--g);border-color:transparent}
+.dbody{padding:6px 20px 24px}
+.sec{padding:14px 0;border-bottom:1px solid var(--border)}
+.sec:last-child{border-bottom:0}
+.sec h4{margin:0 0 10px;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:600}
+.rel{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;padding:6px;border-radius:9px;text-align:left}
+.rel:hover{background:var(--panel-2)}
+.rel .k{font-size:11.5px;color:var(--ink-soft)}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:6px 10px;font-size:13px}
+.kv dt{color:var(--ink-soft)}
+.kv dd{margin:0;word-break:break-word}
+.kv a{color:var(--accent)}
+.note{font-size:13px;line-height:1.55;white-space:pre-wrap;margin:0}
+.dact{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px}
+.dact .btn{justify-content:center}
+.dact .full{grid-column:span 2}
+.muted{color:var(--ink-soft);font-size:13px}
+
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(15,18,17,.45);display:none;align-items:flex-start;justify-content:center;z-index:60;padding:40px 16px;overflow:auto}
+.overlay.show{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:16px;width:100%;max-width:620px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.mhead{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
+.mhead h3{margin:0;font-family:Fraunces,Georgia,serif;font-size:19px}
+.mbody{padding:18px 22px}
+.mfoot{display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid var(--border)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:span 2}
+.field label{font-size:12px;font-weight:500;color:var(--ink-soft)}
+.field input,.field select,.field textarea{border:1px solid var(--border);background:var(--panel-2);border-radius:9px;padding:9px 11px;outline:none;width:100%}
+.field textarea{min-height:70px;resize:vertical}
+.fsec{grid-column:span 2;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:600;margin-top:8px;padding-top:12px;border-top:1px dashed var(--border)}
+.photo-row{display:flex;align-items:center;gap:14px;grid-column:span 2}
+.radio{display:flex;gap:6px}
+.radio label{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--border);border-radius:9px;padding:8px;cursor:pointer;font-size:13px;color:var(--ink)}
+.radio input{display:none}
+.radio input:checked+span{font-weight:600}
+.radio label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.sp-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.sp-list .chip{display:inline-flex;align-items:center;gap:4px;color:var(--ink)}
+.sp-list .chip button{border:0;background:transparent;padding:0 0 0 2px;color:var(--ink-soft);font-size:14px;line-height:1}
+.hint{font-size:11.5px;color:var(--ink-soft)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;z-index:90;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:860px){
+  .drawer{position:fixed;left:0;right:0;bottom:0;width:auto;max-height:78vh;border-left:0;border-top:1px solid var(--border);border-radius:18px 18px 0 0;z-index:40;box-shadow:0 -10px 40px rgba(0,0,0,.18)}
+  .stats{display:none}
+  .btn .lbl{display:none}
+  .btn.primary .lbl{display:inline}
+}
+@media (max-width:560px){
+  header{padding:12px 16px}
+  .brand{flex-basis:100%}
+  .brand .sub{display:none}
+  .actions{width:100%}
+  .actions .btn.primary{flex:1;justify-content:center}
+  .toolbar{padding:10px 16px}
+  .list{padding:4px 16px 30px}
+  .fgrid{grid-template-columns:1fr}
+  .field.full,.fsec,.photo-row{grid-column:auto}
+  .legend{display:none}
+  .rootsel span{display:none}
+  .search{max-width:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5V12M5 16.5V14a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2.5"/></svg></div>
+      <div style="min-width:0">
+        <h1 id="familyName" title="Klik untuk mengganti nama keluarga"></h1>
+        <div class="sub">Silsilah keluarga · tersimpan di perangkat ini</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="btnAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">Tambah anggota</span></button>
+      <button class="btn" id="btnExport" title="Ekspor data (JSON)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span class="lbl">Ekspor</span></button>
+      <button class="btn" id="btnImport" title="Impor data (JSON)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg><span class="lbl">Impor</span></button>
+      <button class="btn icon" id="btnMenu" title="Lainnya"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+      <button class="btn icon" id="btnTheme" title="Ganti tema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+      <input type="file" id="fileImport" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="seg" id="viewSeg">
+      <button data-v="tree" class="on">Pohon</button>
+      <button data-v="list">Daftar</button>
+    </div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Cari nama, kota, marga…" autocomplete="off">
+      <div class="results" id="results"></div>
+    </div>
+    <label class="rootsel" id="rootWrap"><span>Tampilkan:</span><select id="rootSel"></select></label>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <main>
+    <div class="viewport" id="vp">
+      <div class="stage" id="stage"></div>
+      <div class="legend"><span><i style="background:var(--male)"></i>Laki-laki</span><span><i style="background:var(--female)"></i>Perempuan</span><span><i style="background:none;border:2px dashed var(--accent);width:14px;height:0;border-radius:0;border-width:2px 0 0"></i>Pasangan</span></div>
+      <div class="zoom">
+        <button class="btn icon" id="zIn" title="Perbesar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button class="btn icon" id="zOut" title="Perkecil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+        <button class="btn icon" id="zFit" title="Paskan ke layar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      </div>
+    </div>
+    <div class="list" id="list"></div>
+    <aside class="drawer" id="drawer"></aside>
+  </main>
+</div>
+
+<div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+"use strict";
+const KEY = "silsilah.v1", THEME_KEY = "silsilah.theme";
+const CW = 188, CH = 72, CGAP = 16, SGAP = 30, VGAP = 78, PAD = 60;
+
+/* ---------- Data contoh (fiktif) ---------- */
+const SAMPLE = {
+  familyName: "Keluarga Besar Santoso",
+  people: [
+    {id:"p1",name:"Soedarmo Santoso",gender:"m",birth:"1930-04-12",death:"2005-08-02",marga:"Santoso",city:"Yogyakarta",job:"Guru",bio:"Pendiri keluarga besar. Mengajar di SD selama 35 tahun.",spouses:["p2"]},
+    {id:"p2",name:"Siti Aminah",gender:"f",birth:"1935-09-21",death:"2015-01-17",city:"Yogyakarta",job:"Pedagang batik",spouses:["p1"]},
+    {id:"p3",name:"Budi Santoso",gender:"m",birth:"1956-02-03",fatherId:"p1",motherId:"p2",marga:"Santoso",city:"Jakarta",job:"Pensiunan BUMN",phone:"0812-0000-0003",spouses:["p4"]},
+    {id:"p4",name:"Ratna Dewi",gender:"f",birth:"1959-06-15",city:"Jakarta",job:"Ibu rumah tangga",spouses:["p3"]},
+    {id:"p5",name:"Sri Wahyuni Santoso",gender:"f",birth:"1960-11-30",fatherId:"p1",motherId:"p2",marga:"Santoso",city:"Semarang",job:"Dokter",spouses:["p6"]},
+    {id:"p6",name:"Hendra Gunawan",gender:"m",birth:"1957-07-08",marga:"Gunawan",city:"Semarang",job:"Arsitek",spouses:["p5"]},
+    {id:"p7",name:"Agus Santoso",gender:"m",birth:"1964-03-25",death:"2019-10-11",fatherId:"p1",motherId:"p2",marga:"Santoso",city:"Surabaya",job:"Wiraswasta",spouses:["p8"]},
+    {id:"p8",name:"Maria Lestari",gender:"f",birth:"1966-12-05",city:"Surabaya",job:"Perawat",spouses:["p7"]},
+    {id:"p9",name:"Dimas Santoso",gender:"m",birth:"1983-08-19",fatherId:"p3",motherId:"p4",marga:"Santoso",city:"Bandung",job:"Software engineer",phone:"0812-0000-0009",spouses:["p10"]},
+    {id:"p10",name:"Anisa Putri",gender:"f",birth:"1986-05-02",city:"Bandung",job:"Desainer",spouses:["p9"]},
+    {id:"p11",name:"Larasati Santoso",gender:"f",birth:"1988-01-14",fatherId:"p3",motherId:"p4",marga:"Santoso",city:"Jakarta",job:"Notaris"},
+    {id:"p12",name:"Rizky Gunawan",gender:"m",birth:"1985-09-09",fatherId:"p6",motherId:"p5",marga:"Gunawan",city:"Singapura",job:"Analis keuangan"},
+    {id:"p13",name:"Nadia Gunawan",gender:"f",birth:"1990-04-27",fatherId:"p6",motherId:"p5",marga:"Gunawan",city:"Semarang",job:"Dosen",spouses:["p14"]},
+    {id:"p14",name:"Fajar Nugroho",gender:"m",birth:"1988-10-03",marga:"Nugroho",city:"Semarang",job:"Fotografer",spouses:["p13"]},
+    {id:"p15",name:"Yosef Santoso",gender:"m",birth:"1992-07-21",fatherId:"p7",motherId:"p8",marga:"Santoso",city:"Surabaya",job:"Chef"},
+    {id:"p16",name:"Kirana Santoso",gender:"f",birth:"2012-02-11",fatherId:"p9",motherId:"p10",marga:"Santoso",city:"Bandung",job:"Pelajar"},
+    {id:"p17",name:"Arka Santoso",gender:"m",birth:"2015-12-01",fatherId:"p9",motherId:"p10",marga:"Santoso",city:"Bandung",job:"Pelajar"},
+    {id:"p18",name:"Alya Nugroho",gender:"f",birth:"2019-06-06",fatherId:"p14",motherId:"p13",marga:"Nugroho",city:"Semarang"}
+  ]
+};
+
+/* ---------- State ---------- */
+let state = load();
+let ui = { view:"tree", root:"all", selected:null, k:1, x:0, y:0, needFit:true };
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const byId = id => state.people.find(p => p.id === id);
+const uid = () => "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const MONTHS = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+
+function load(){
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.people)) return normalize(s); } catch(e){}
+  return normalize(JSON.parse(JSON.stringify(SAMPLE)));
+}
+function normalize(s){
+  s.familyName = s.familyName || "Silsilah Keluarga";
+  s.people.forEach(p => { p.spouses = Array.isArray(p.spouses) ? p.spouses : []; p.gender = p.gender === "f" ? "f" : "m"; });
+  return s;
+}
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(state)); return true; }
+  catch(e){ toast("Gagal menyimpan: penyimpanan browser penuh. Coba kurangi foto."); return false; }
+}
+function toast(msg){ const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 2600); }
+
+/* ---------- Helpers ---------- */
+const year = d => d ? d.slice(0,4) : "";
+function fmtDate(d){ if(!d) return ""; const [y,m,dd] = d.split("-"); return m ? `${+dd} ${MONTHS[+m-1]} ${y}` : y; }
+function lifespan(p){ const b = year(p.birth), d = year(p.death); if(!b && !d) return ""; return d ? `${b || "?"} – ${d}` : `${b}`; }
+function age(p){
+  if(!p.birth) return null;
+  const end = p.death ? new Date(p.death) : new Date(), b = new Date(p.birth);
+  let a = end.getFullYear() - b.getFullYear();
+  if (end.getMonth() < b.getMonth() || (end.getMonth() === b.getMonth() && end.getDate() < b.getDate())) a--;
+  return a;
+}
+function initials(n){ return (n||"?").trim().split(/\s+/).slice(0,2).map(w => w[0]).join("").toUpperCase(); }
+function avatar(p, cls=""){
+  return p.photo
+    ? `<div class="avatar ${cls}" style="background-image:url('${p.photo}')"></div>`
+    : `<div class="avatar ${cls}">${esc(initials(p.name))}</div>`;
+}
+const byBirth = (a,b) => (a.birth||"9999").localeCompare(b.birth||"9999");
+const childrenOf = id => state.people.filter(c => c.fatherId === id || c.motherId === id).sort(byBirth);
+const spousesOf = p => p.spouses.map(byId).filter(Boolean);
+function siblingsOf(p){
+  if(!p.fatherId && !p.motherId) return [];
+  return state.people.filter(s => s.id !== p.id && ((p.fatherId && s.fatherId === p.fatherId) || (p.motherId && s.motherId === p.motherId))).sort(byBirth);
+}
+function generations(){
+  const g = {};
+  const calc = (p, stack = new Set()) => {
+    if (g[p.id] != null) return g[p.id];
+    if (stack.has(p.id)) return 1; stack.add(p.id);
+    const ps = [byId(p.fatherId), byId(p.motherId)].filter(Boolean);
+    g[p.id] = ps.length ? Math.max(...ps.map(x => calc(x, stack) ?? 1)) + 1 : null;
+    return g[p.id];
+  };
+  state.people.forEach(p => calc(p));
+  // pasangan tanpa orang tua tercatat ikut generasi pasangannya
+  for (let i = 0; i < 3; i++) state.people.forEach(p => { if (g[p.id] == null) { const s = spousesOf(p).map(x => g[x.id]).find(v => v != null); if (s != null) g[p.id] = s; } });
+  state.people.forEach(p => { if (g[p.id] == null) g[p.id] = 1; });
+  return g;
+}
+
+/* ---------- Tree layout ---------- */
+function buildUnit(id, seen){
+  seen.add(id);
+  const p = byId(id);
+  const sp = p.spouses.filter(s => byId(s) && !seen.has(s));
+  sp.forEach(s => seen.add(s));
+  const ids = [id, ...sp];
+  const kids = state.people.filter(c => !seen.has(c.id) && (ids.includes(c.fatherId) || ids.includes(c.motherId))).sort(byBirth);
+  const children = [];
+  kids.forEach(k => { if (!seen.has(k.id)) children.push(buildUnit(k.id, seen)); });
+  return { ids, children };
+}
+function topLevel(){
+  const hasParent = p => byId(p.fatherId) || byId(p.motherId);
+  return state.people.filter(p => !hasParent(p) && !spousesOf(p).some(hasParent))
+    .sort((a,b) => (a.gender === "m" ? 0 : 1) - (b.gender === "m" ? 0 : 1) || byBirth(a,b));
+}
+function buildForest(){
+  const seen = new Set(), units = [];
+  if (ui.root !== "all" && byId(ui.root)) { units.push(buildUnit(ui.root, seen)); return units; }
+  topLevel().forEach(p => { if (!seen.has(p.id)) units.push(buildUnit(p.id, seen)); });
+  state.people.forEach(p => { if (!seen.has(p.id)) units.push(buildUnit(p.id, seen)); });
+  return units;
+}
+function measure(u){
+  u.selfW = u.ids.length * CW + (u.ids.length - 1) * CGAP;
+  u.children.forEach(measure);
+  u.kidsW = u.children.reduce((a,c) => a + c.w, 0) + Math.max(0, u.children.length - 1) * SGAP;
+  u.w = Math.max(u.selfW, u.kidsW);
+  u.depth = 1 + Math.max(0, ...u.children.map(c => c.depth));
+}
+function place(u, x, y, out){
+  u.x = x + (u.w - u.selfW) / 2;
+  u.ids.forEach((id, i) => out.nodes.push({ id, x: u.x + i * (CW + CGAP), y }));
+  for (let i = 1; i < u.ids.length; i++) {
+    const lx = u.x + i * (CW + CGAP);
+    out.couples.push(`M${lx - CGAP},${y + CH/2}H${lx}`);
+  }
+  if (!u.children.length) return;
+  const sx = u.ids.length > 1 ? u.x + CW + CGAP/2 : u.x + CW/2;
+  const sy = u.ids.length > 1 ? y + CH/2 : y + CH;
+  const my = y + CH + VGAP/2, cy = y + CH + VGAP;
+  let cx = x + (u.w - u.kidsW) / 2;
+  const tops = [];
+  u.children.forEach(c => { place(c, cx, cy, out); tops.push(c.x + CW/2); cx += c.w + SGAP; });
+  const minX = Math.min(sx, ...tops), maxX = Math.max(sx, ...tops);
+  let d = `M${sx},${sy}V${my}`;
+  if (maxX - minX > 1) d += `M${minX},${my}H${maxX}`;
+  tops.forEach(t => d += `M${t},${my}V${cy}`);
+  out.paths.push(d);
+}
+
+function renderTree(){
+  const stage = $("stage");
+  if (!state.people.length) { stage.innerHTML = ""; stage.style.width = stage.style.height = "0"; return; }
+  const units = buildForest(), out = { nodes:[], paths:[], couples:[] };
+  units.forEach(measure);
+  let x = PAD, H = 0;
+  units.forEach(u => { place(u, x, PAD, out); x += u.w + SGAP * 2; H = Math.max(H, u.depth); });
+  const W = x - SGAP * 2 + PAD, Ht = PAD * 2 + H * CH + (H - 1) * VGAP;
+  stage.style.width = W + "px"; stage.style.height = Ht + "px";
+  stage.dataset.w = W; stage.dataset.h = Ht;
+  stage.innerHTML =
+    `<svg width="${W}" height="${Ht}">${out.paths.map(d => `<path d="${d}"/>`).join("")}${out.couples.map(d => `<path class="couple" d="${d}"/>`).join("")}</svg>` +
+    out.nodes.map(n => {
+      const p = byId(n.id);
+      const sub = [lifespan(p), p.city].filter(Boolean).join(" · ");
+      return `<div class="node ${p.gender}${p.death ? " dead" : ""}${ui.selected === p.id ? " sel" : ""}" data-id="${p.id}" style="left:${n.x}px;top:${n.y}px">
+        ${avatar(p)}<div class="info"><div class="nm">${esc(p.name)}${p.death ? " †" : ""}</div><div class="yr">${esc(sub) || "&nbsp;"}</div></div></div>`;
+    }).join("");
+  if (ui.needFit) { fit(); ui.needFit = false; } else applyView();
+}
+
+/* ---------- Pan & zoom ---------- */
+const vp = $("vp");
+function applyView(){ $("stage").style.transform = `translate(${ui.x}px,${ui.y}px) scale(${ui.k})`; }
+function fit(){
+  const st = $("stage"), W = +st.dataset.w || 1, H = +st.dataset.h || 1, r = vp.getBoundingClientRect();
+  if (!r.width) return;
+  ui.k = Math.min(r.width / W, r.height / H, 1.1);
+  // di layar kecil jangan terlalu kecil: tetap terbaca, sisanya digeser
+  ui.k = Math.max(ui.k, r.width < 700 ? 0.5 : 0.15);
+  ui.x = (r.width - W * ui.k) / 2; ui.y = r.width < 700 ? 0 : Math.max(0, (r.height - H * ui.k) / 2);
+  applyView();
+}
+function zoomAt(k2, mx, my){
+  k2 = Math.min(2.5, Math.max(0.15, k2));
+  ui.x = mx - (mx - ui.x) * k2 / ui.k; ui.y = my - (my - ui.y) * k2 / ui.k; ui.k = k2; applyView();
+}
+function centerOn(id){
+  const el = $("stage").querySelector(`.node[data-id="${id}"]`); if (!el) return;
+  const r = vp.getBoundingClientRect();
+  if (ui.k < 0.7) ui.k = 0.9;
+  ui.x = r.width / 2 - (parseFloat(el.style.left) + CW/2) * ui.k;
+  ui.y = r.height / 2.4 - (parseFloat(el.style.top) + CH/2) * ui.k;
+  const stage = $("stage"); stage.style.transition = "transform .35s ease"; applyView();
+  setTimeout(() => stage.style.transition = "", 380);
+  el.classList.remove("hl"); void el.offsetWidth; el.classList.add("hl");
+}
+vp.addEventListener("wheel", e => {
+  e.preventDefault();
+  const r = vp.getBoundingClientRect();
+  zoomAt(ui.k * Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015)), e.clientX - r.left, e.clientY - r.top);
+}, { passive:false });
+const ptrs = new Map(); let drag = null, moved = false, pinch = null;
+vp.addEventListener("pointerdown", e => {
+  if (e.target.closest(".zoom,.legend,.empty")) return;
+  vp.setPointerCapture(e.pointerId);
+  ptrs.set(e.pointerId, { x:e.clientX, y:e.clientY });
+  moved = false;
+  if (ptrs.size === 1) drag = { x:e.clientX, y:e.clientY, ox:ui.x, oy:ui.y, target:e.target };
+  if (ptrs.size === 2) { const [a,b] = [...ptrs.values()]; pinch = { d:Math.hypot(a.x-b.x, a.y-b.y), k:ui.k }; drag = null; }
+});
+vp.addEventListener("pointermove", e => {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.set(e.pointerId, { x:e.clientX, y:e.clientY });
+  if (pinch && ptrs.size === 2) {
+    const [a,b] = [...ptrs.values()], r = vp.getBoundingClientRect();
+    zoomAt(pinch.k * Math.hypot(a.x-b.x, a.y-b.y) / pinch.d, (a.x+b.x)/2 - r.left, (a.y+b.y)/2 - r.top);
+    moved = true; return;
+  }
+  if (!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (!moved && Math.hypot(dx, dy) < 5) return;
+  moved = true; vp.classList.add("drag");
+  ui.x = drag.ox + dx; ui.y = drag.oy + dy; applyView();
+});
+const endPtr = e => {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.delete(e.pointerId);
+  if (ptrs.size < 2) pinch = null;
+  if (e.type === "pointerup" && drag && !moved) {
+    const n = drag.target.closest && drag.target.closest(".node");
+    if (n) select(n.dataset.id); else if (ui.selected) select(null);
+  }
+  if (!ptrs.size) { drag = null; vp.classList.remove("drag"); }
+};
+vp.addEventListener("pointerup", endPtr);
+vp.addEventListener("pointercancel", endPtr);
+$("zIn").onclick = () => { const r = vp.getBoundingClientRect(); zoomAt(ui.k * 1.25, r.width/2, r.height/2); };
+$("zOut").onclick = () => { const r = vp.getBoundingClientRect(); zoomAt(ui.k / 1.25, r.width/2, r.height/2); };
+$("zFit").onclick = fit;
+window.addEventListener("resize", () => { if (ui.view === "tree") applyView(); });
+
+/* ---------- List view ---------- */
+function renderList(){
+  const L = $("list");
+  if (!state.people.length) { L.innerHTML = emptyHtml(); return; }
+  const g = generations(), groups = {};
+  state.people.forEach(p => (groups[g[p.id]] ||= []).push(p));
+  L.innerHTML = Object.keys(groups).sort((a,b) => a-b).map(k =>
+    `<div class="gen-h">Generasi ${k} · ${groups[k].length} orang</div><div class="grid">` +
+    groups[k].sort(byBirth).map(p => {
+      const meta = [lifespan(p), p.city, p.job].filter(Boolean).map(esc).join(" · ");
+      return `<button class="pcard ${p.gender}" data-id="${p.id}">${avatar(p)}<div style="min-width:0"><div style="font-weight:600">${esc(p.name)}${p.death ? " †" : ""}</div><div class="meta">${meta || "—"}</div></div></button>`;
+    }).join("") + `</div>`).join("");
+}
+$("list").addEventListener("click", e => { const b = e.target.closest(".pcard"); if (b) select(b.dataset.id); });
+function emptyHtml(){
+  return `<div class="empty"><h3>Belum ada anggota</h3><p>Mulai dengan menambahkan anggota keluarga tertua yang Anda ketahui.</p><button class="btn primary" onclick="document.getElementById('btnAdd').click()">Tambah anggota pertama</button></div>`;
+}
+
+/* ---------- Drawer (detail) ---------- */
+function select(id, center){
+  ui.selected = id;
+  document.querySelectorAll(".node.sel").forEach(n => n.classList.remove("sel"));
+  if (id) { const n = $("stage").querySelector(`.node[data-id="${id}"]`); if (n) n.classList.add("sel"); }
+  renderDrawer();
+  if (id && center && ui.view === "tree") {
+    if (!$("stage").querySelector(`.node[data-id="${id}"]`)) { ui.root = "all"; renderRootSel(); renderTree(); }
+    centerOn(id);
+  }
+}
+function relBtn(p, label){
+  return `<button class="rel ${p.gender}" data-go="${p.id}">${avatar(p, "sm")}<div><div style="font-weight:500">${esc(p.name)}</div><div class="k">${esc(label)}${lifespan(p) ? " · " + esc(lifespan(p)) : ""}</div></div></button>`;
+}
+function renderDrawer(){
+  const D = $("drawer"), p = ui.selected && byId(ui.selected);
+  if (!p) { D.classList.remove("show"); D.innerHTML = ""; return; }
+  const a = age(p), father = byId(p.fatherId), mother = byId(p.motherId);
+  const sp = spousesOf(p), kids = childrenOf(p.id), sibs = siblingsOf(p);
+  const g = generations()[p.id];
+  const parents = [father && relBtn(father, "Ayah"), mother && relBtn(mother, "Ibu")].filter(Boolean).join("");
+  const kv = [
+    ["Lahir", [p.birthPlace, fmtDate(p.birth)].filter(Boolean).join(", ")],
+    ["Wafat", [p.deathPlace, fmtDate(p.death)].filter(Boolean).join(", ")],
+    ["Pekerjaan", p.job], ["Domisili", p.city], ["Alamat", p.address],
+    ["No. HP", p.phone ? `<a href="tel:${esc(p.phone.replace(/[^\d+]/g, ""))}">${esc(p.phone)}</a>` : "", true],
+    ["Email", p.email ? `<a href="mailto:${esc(p.email)}">${esc(p.email)}</a>` : "", true]
+  ].filter(r => r[1]);
+  D.innerHTML = `
+    <button class="btn icon close" data-act="close" title="Tutup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <div class="dhead ${p.gender}">
+      ${avatar(p, "lg")}
+      <h2>${esc(p.name)}</h2>
+      <div class="dates">${p.birth || p.death ? esc(lifespan(p)) : "Tanggal belum diisi"}${a != null ? ` · ${p.death ? "wafat usia" : "usia"} ${a} th` : ""}</div>
+      <div class="chips">
+        <span class="chip g">${p.gender === "f" ? "Perempuan" : "Laki-laki"}</span>
+        <span class="chip">Generasi ${g}</span>
+        ${p.marga ? `<span class="chip">Marga ${esc(p.marga)}</span>` : ""}
+        ${p.death ? `<span class="chip">Almarhum${p.gender === "f" ? "ah" : ""}</span>` : ""}
+      </div>
+    </div>
+    <div class="dbody">
+      ${kv.length ? `<div class="sec"><h4>Informasi</h4><dl class="kv">${kv.map(([k,v,raw]) => `<dt>${k}</dt><dd>${raw ? v : esc(v)}</dd>`).join("")}</dl></div>` : ""}
+      ${p.bio ? `<div class="sec"><h4>Tentang</h4><p class="note">${esc(p.bio)}</p></div>` : ""}
+      ${p.notes ? `<div class="sec"><h4>Catatan</h4><p class="note">${esc(p.notes)}</p></div>` : ""}
+      <div class="sec"><h4>Orang tua</h4>${parents || `<div class="muted">Belum dicatat</div>`}</div>
+      <div class="sec"><h4>Pasangan</h4>${sp.length ? sp.map(s => relBtn(s, s.gender === "f" ? "Istri" : "Suami")).join("") : `<div class="muted">Belum dicatat</div>`}</div>
+      <div class="sec"><h4>Anak (${kids.length})</h4>${kids.length ? kids.map(k => relBtn(k, k.gender === "f" ? "Anak perempuan" : "Anak laki-laki")).join("") : `<div class="muted">Belum dicatat</div>`}</div>
+      ${sibs.length ? `<div class="sec"><h4>Saudara (${sibs.length})</h4>${sibs.map(s => relBtn(s, s.gender === "f" ? "Saudari" : "Saudara")).join("")}</div>` : ""}
+      <div class="sec">
+        <div class="dact">
+          <button class="btn primary full" data-act="edit">Ubah data</button>
+          <button class="btn" data-act="child">+ Anak</button>
+          <button class="btn" data-act="spouse">+ Pasangan</button>
+          ${!father || !mother ? `<button class="btn" data-act="parent">+ Orang tua</button>` : ""}
+          <button class="btn${father && mother ? "" : " full"}" data-act="root">Jadikan akar pohon</button>
+          <button class="btn danger full" data-act="del">Hapus anggota</button>
+        </div>
+      </div>
+    </div>`;
+  D.classList.add("show");
+  D.scrollTop = 0;
+}
+$("drawer").addEventListener("click", e => {
+  const go = e.target.closest("[data-go]"); if (go) return select(go.dataset.go, true);
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const p = byId(ui.selected); if (!p) return;
+  const act = b.dataset.act;
+  if (act === "close") select(null);
+  else if (act === "edit") openForm(p);
+  else if (act === "child") openForm(null, { [p.gender === "f" ? "motherId" : "fatherId"]: p.id, [p.gender === "f" ? "fatherId" : "motherId"]: (p.spouses.length === 1 ? p.spouses[0] : ""), marga: p.gender === "m" ? p.marga : (byId(p.spouses[0])?.marga || "") });
+  else if (act === "spouse") openForm(null, { gender: p.gender === "m" ? "f" : "m", spouses: [p.id] });
+  else if (act === "parent") openForm(null, { gender: byId(p.fatherId) ? "f" : "m", _childOf: p.id, marga: !byId(p.fatherId) ? p.marga : "" });
+  else if (act === "root") { ui.root = p.id; ui.view = "tree"; ui.needFit = true; renderAll(); }
+  else if (act === "del") {
+    if (!confirm(`Hapus "${p.name}" dari silsilah? Hubungan dengan anggota lain juga akan dilepas.`)) return;
+    removePerson(p.id); select(null); renderAll(); toast("Anggota dihapus");
+  }
+});
+function removePerson(id){
+  state.people = state.people.filter(p => p.id !== id);
+  state.people.forEach(p => {
+    if (p.fatherId === id) p.fatherId = "";
+    if (p.motherId === id) p.motherId = "";
+    p.spouses = p.spouses.filter(s => s !== id);
+  });
+  if (ui.root === id) ui.root = "all";
+  save();
+}
+
+/* ---------- Form ---------- */
+let formPhoto = null, formSpouses = [];
+function opt(list, sel, empty){
+  return `<option value="">${empty}</option>` + list.map(p => `<option value="${p.id}" ${p.id === sel ? "selected" : ""}>${esc(p.name)}${p.birth ? " (" + year(p.birth) + ")" : ""}</option>`).join("");
+}
+function openForm(p, preset = {}){
+  const isNew = !p;
+  const d = Object.assign({ name:"", gender:"m", spouses:[] }, p || {}, preset);
+  formPhoto = d.photo || null; formSpouses = [...(d.spouses || [])];
+  const others = state.people.filter(x => !p || x.id !== p.id).sort((a,b) => a.name.localeCompare(b.name));
+  const childOf = preset._childOf && byId(preset._childOf);
+  $("modal").innerHTML = `
+    <div class="mhead"><h3>${isNew ? (childOf ? `Tambah orang tua ${esc(childOf.name)}` : "Tambah anggota") : "Ubah data"}</h3>
+      <button class="btn icon" data-x title="Tutup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <form class="mbody" id="pform" autocomplete="off">
+      <div class="fgrid">
+        <div class="photo-row">
+          <div id="fAvatar" class="${d.gender}"></div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <label class="btn" style="cursor:pointer">Pilih foto<input type="file" accept="image/*" id="fPhoto" hidden></label>
+              <button type="button" class="btn" id="fPhotoDel">Hapus foto</button>
+            </div>
+            <span class="hint">Foto otomatis diperkecil agar hemat penyimpanan.</span>
+          </div>
+        </div>
+        <div class="field full"><label>Nama lengkap *</label><input name="name" required value="${esc(d.name)}" placeholder="mis. Budi Santoso"></div>
+        <div class="field"><label>Jenis kelamin</label>
+          <div class="radio"><label><input type="radio" name="gender" value="m" ${d.gender !== "f" ? "checked" : ""}><span>Laki-laki</span></label><label><input type="radio" name="gender" value="f" ${d.gender === "f" ? "checked" : ""}><span>Perempuan</span></label></div></div>
+        <div class="field"><label>Marga / nama keluarga</label><input name="marga" value="${esc(d.marga)}"></div>
+        <div class="field"><label>Tanggal lahir</label><input type="date" name="birth" value="${esc(d.birth)}"></div>
+        <div class="field"><label>Tempat lahir</label><input name="birthPlace" value="${esc(d.birthPlace)}"></div>
+        <div class="field"><label>Tanggal wafat <span class="hint">(kosongkan bila masih hidup)</span></label><input type="date" name="death" value="${esc(d.death)}"></div>
+        <div class="field"><label>Tempat wafat / dimakamkan</label><input name="deathPlace" value="${esc(d.deathPlace)}"></div>
+
+        <div class="fsec">Hubungan keluarga</div>
+        ${childOf ? `<div class="field full"><span class="hint">Anggota ini akan dicatat sebagai orang tua dari <b>${esc(childOf.name)}</b>.</span></div>` : `
+        <div class="field"><label>Ayah</label><select name="fatherId">${opt(others.filter(x => x.gender === "m"), d.fatherId, "— Tidak diketahui —")}</select></div>
+        <div class="field"><label>Ibu</label><select name="motherId">${opt(others.filter(x => x.gender === "f"), d.motherId, "— Tidak diketahui —")}</select></div>`}
+        <div class="field full"><label>Pasangan</label>
+          <div class="sp-list" id="spList"></div>
+          <select id="spAdd">${opt(others, "", "+ Tambah pasangan…")}</select></div>
+
+        <div class="fsec">Kontak &amp; domisili</div>
+        <div class="field"><label>No. HP / WhatsApp</label><input name="phone" type="tel" value="${esc(d.phone)}"></div>
+        <div class="field"><label>Email</label><input name="email" type="email" value="${esc(d.email)}"></div>
+        <div class="field"><label>Kota domisili</label><input name="city" value="${esc(d.city)}"></div>
+        <div class="field"><label>Pekerjaan</label><input name="job" value="${esc(d.job)}"></div>
+        <div class="field full"><label>Alamat</label><input name="address" value="${esc(d.address)}"></div>
+
+        <div class="fsec">Cerita &amp; catatan</div>
+        <div class="field full"><label>Bio singkat</label><textarea name="bio">${esc(d.bio)}</textarea></div>
+        <div class="field full"><label>Catatan</label><textarea name="notes">${esc(d.notes)}</textarea></div>
+      </div>
+    </form>
+    <div class="mfoot"><button class="btn" data-x>Batal</button><button class="btn primary" id="fSave">${isNew ? "Tambahkan" : "Simpan"}</button></div>`;
+  const F = $("pform");
+  const drawAvatar = () => {
+    const g = F.querySelector("[name=gender]:checked").value;
+    $("fAvatar").className = g;
+    $("fAvatar").innerHTML = avatar({ name: F.name.value || "?", photo: formPhoto }, "lg");
+  };
+  const drawSpouses = () => {
+    $("spList").innerHTML = formSpouses.map(id => byId(id)).filter(Boolean)
+      .map(s => `<span class="chip">${esc(s.name)}<button type="button" data-rm="${s.id}" title="Lepas">×</button></span>`).join("") || `<span class="hint">Belum ada pasangan</span>`;
+  };
+  drawAvatar(); drawSpouses();
+  F.name.addEventListener("input", drawAvatar);
+  F.querySelectorAll("[name=gender]").forEach(r => r.addEventListener("change", drawAvatar));
+  $("spAdd").onchange = e => { const v = e.target.value; if (v && !formSpouses.includes(v)) formSpouses.push(v); e.target.value = ""; drawSpouses(); };
+  $("spList").onclick = e => { const b = e.target.closest("[data-rm]"); if (b) { formSpouses = formSpouses.filter(x => x !== b.dataset.rm); drawSpouses(); } };
+  $("fPhoto").onchange = async e => { const f = e.target.files[0]; if (!f) return; try { formPhoto = await resizeImage(f, 240); drawAvatar(); } catch(_) { toast("Foto tidak dapat dibaca"); } };
+  $("fPhotoDel").onclick = () => { formPhoto = null; drawAvatar(); };
+  F.onsubmit = e => { e.preventDefault(); $("fSave").click(); };
+  $("fSave").onclick = () => {
+    if (!F.name.value.trim()) { F.name.focus(); toast("Nama wajib diisi"); return; }
+    const fd = new FormData(F), rec = p || { id: uid(), spouses: [] };
+    const prev = JSON.parse(JSON.stringify(rec));
+    ["name","gender","marga","birth","birthPlace","death","deathPlace","phone","email","city","job","address","bio","notes"].forEach(k => rec[k] = (fd.get(k) || "").trim());
+    if (!childOf) { rec.fatherId = fd.get("fatherId") || ""; rec.motherId = fd.get("motherId") || ""; }
+    if (rec.death && rec.birth && rec.death < rec.birth) { toast("Tanggal wafat lebih awal dari tanggal lahir"); return; }
+    if (isDescendant(rec.id, rec.fatherId) || isDescendant(rec.id, rec.motherId)) { toast("Orang tua tidak boleh keturunan dari anggota ini"); return; }
+    rec.photo = formPhoto || "";
+    // sinkronkan pasangan dua arah
+    const oldSp = prev.spouses || [];
+    oldSp.filter(s => !formSpouses.includes(s)).forEach(s => { const o = byId(s); if (o) o.spouses = o.spouses.filter(x => x !== rec.id); });
+    formSpouses.forEach(s => { const o = byId(s); if (o && !o.spouses.includes(rec.id)) o.spouses.push(rec.id); });
+    rec.spouses = [...formSpouses];
+    if (isNew) state.people.push(rec);
+    if (childOf) {
+      childOf[rec.gender === "f" ? "motherId" : "fatherId"] = rec.id;
+      const other = byId(childOf[rec.gender === "f" ? "fatherId" : "motherId"]);
+      if (other && !rec.spouses.includes(other.id)) { rec.spouses.push(other.id); if (!other.spouses.includes(rec.id)) other.spouses.push(rec.id); }
+    }
+    if (!save()) return;
+    closeModal();
+    ui.needFit = isNew && state.people.length <= 2;
+    renderAll();
+    select(rec.id, true);
+    toast(isNew ? "Anggota ditambahkan" : "Perubahan disimpan");
+  };
+  openModal();
+  if (isNew) setTimeout(() => F.name.focus(), 50);
+}
+function isDescendant(ancestorId, id){
+  if (!id) return false;
+  const stack = [ancestorId], seen = new Set();
+  while (stack.length) {
+    const cur = stack.pop(); if (seen.has(cur)) continue; seen.add(cur);
+    for (const c of childrenOf(cur)) { if (c.id === id) return true; stack.push(c.id); }
+  }
+  return ancestorId === id;
+}
+function resizeImage(file, size){
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onerror = rej;
+    r.onload = () => {
+      const img = new Image();
+      img.onerror = rej;
+      img.onload = () => {
+        const s = Math.min(img.width, img.height), c = document.createElement("canvas");
+        c.width = c.height = size;
+        c.getContext("2d").drawImage(img, (img.width - s)/2, (img.height - s)/2, s, s, 0, 0, size, size);
+        res(c.toDataURL("image/jpeg", 0.82));
+      };
+      img.src = r.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+function openModal(){ $("overlay").classList.add("show"); }
+function closeModal(){ $("overlay").classList.remove("show"); }
+$("overlay").addEventListener("click", e => { if (e.target.id === "overlay" || e.target.closest("[data-x]")) closeModal(); });
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if ($("overlay").classList.contains("show")) closeModal();
+  else if (ui.selected) select(null);
+});
+
+/* ---------- Menu (lainnya) ---------- */
+$("btnMenu").onclick = () => {
+  $("modal").innerHTML = `
+    <div class="mhead"><h3>Pengaturan</h3><button class="btn icon" data-x title="Tutup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="mbody">
+      <div class="field"><label>Nama keluarga</label><input id="setName" value="${esc(state.familyName)}"></div>
+      <p class="hint" style="margin:14px 0 6px">Data tersimpan di browser perangkat ini. Gunakan <b>Ekspor</b> secara berkala sebagai cadangan, dan <b>Impor</b> untuk memindahkan data ke perangkat lain atau berbagi dengan keluarga.</p>
+      <div class="dact" style="margin-top:14px">
+        <button class="btn" id="setSample">Muat data contoh</button>
+        <button class="btn danger" id="setClear">Kosongkan semua data</button>
+      </div>
+    </div>
+    <div class="mfoot"><button class="btn" data-x>Tutup</button><button class="btn primary" id="setSave">Simpan</button></div>`;
+  $("setSave").onclick = () => { state.familyName = $("setName").value.trim() || "Silsilah Keluarga"; save(); closeModal(); renderAll(); };
+  $("setSample").onclick = () => { if (!confirm("Ganti semua data dengan data contoh?")) return; state = normalize(JSON.parse(JSON.stringify(SAMPLE))); resetView(); toast("Data contoh dimuat"); };
+  $("setClear").onclick = () => { if (!confirm("Hapus SEMUA anggota? Pastikan sudah ekspor cadangan.")) return; state = { familyName: state.familyName, people: [] }; resetView(); toast("Semua data dikosongkan"); };
+  openModal();
+};
+function resetView(){ save(); closeModal(); ui.root = "all"; ui.selected = null; ui.needFit = true; renderAll(); }
+$("familyName").onclick = () => $("btnMenu").click();
+
+/* ---------- Ekspor / Impor ---------- */
+$("btnExport").onclick = () => {
+  const blob = new Blob([JSON.stringify({ app:"silsilah", version:1, exportedAt:new Date().toISOString(), ...state }, null, 2)], { type:"application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `silsilah-${state.familyName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "keluarga"}-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  toast("File cadangan diunduh");
+};
+$("btnImport").onclick = () => $("fileImport").click();
+$("fileImport").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!d || !Array.isArray(d.people) || d.people.some(p => !p || !p.id || !p.name)) throw new Error();
+    if (!confirm(`Impor ${d.people.length} anggota dari "${f.name}"? Data saat ini akan diganti.`)) return;
+    state = normalize({ familyName: d.familyName, people: d.people });
+    resetView(); toast("Data berhasil diimpor");
+  } catch(_) { toast("File tidak valid. Gunakan file hasil Ekspor."); }
+};
+
+/* ---------- Pencarian ---------- */
+$("q").addEventListener("input", () => {
+  const q = $("q").value.trim().toLowerCase(), R = $("results");
+  if (ui.view === "list") { renderListFiltered(q); R.classList.remove("show"); return; }
+  if (!q) { R.classList.remove("show"); return; }
+  const hits = state.people.filter(p => [p.name, p.city, p.marga, p.job].some(v => (v||"").toLowerCase().includes(q))).slice(0, 12);
+  R.innerHTML = hits.length ? hits.map(p => `<button class="${p.gender}" data-id="${p.id}">${avatar(p, "sm")}<div><div style="font-weight:500">${esc(p.name)}</div><div class="hint">${esc([lifespan(p), p.city].filter(Boolean).join(" · "))}</div></div></button>`).join("") : `<div class="muted" style="padding:12px">Tidak ditemukan</div>`;
+  R.classList.add("show");
+});
+$("results").addEventListener("click", e => { const b = e.target.closest("[data-id]"); if (!b) return; $("results").classList.remove("show"); $("q").value = ""; select(b.dataset.id, true); });
+document.addEventListener("click", e => { if (!e.target.closest(".search")) $("results").classList.remove("show"); });
+function renderListFiltered(q){
+  renderList();
+  if (!q) return;
+  $("list").querySelectorAll(".pcard").forEach(c => {
+    const p = byId(c.dataset.id);
+    c.style.display = [p.name, p.city, p.marga, p.job].some(v => (v||"").toLowerCase().includes(q)) ? "" : "none";
+  });
+  $("list").querySelectorAll(".grid").forEach(g => {
+    const any = [...g.children].some(c => c.style.display !== "none");
+    g.style.display = g.previousElementSibling.style.display = any ? "" : "none";
+  });
+}
+
+/* ---------- View switch & render ---------- */
+$("viewSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-v]"); if (!b) return;
+  ui.view = b.dataset.v; $("q").value = ""; renderAll();
+});
+$("btnAdd").onclick = () => openForm(null);
+$("btnTheme").onclick = () => {
+  const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem(THEME_KEY, next); } catch(_) {}
+};
+try { const t = localStorage.getItem(THEME_KEY); if (t) document.documentElement.dataset.theme = t; } catch(_) {}
+$("rootSel").onchange = e => { ui.root = e.target.value; ui.needFit = true; renderTree(); };
+
+function renderRootSel(){
+  const opts = [...state.people].sort((a,b) => a.name.localeCompare(b.name));
+  if (ui.root !== "all" && !byId(ui.root)) ui.root = "all";
+  $("rootSel").innerHTML = `<option value="all">Semua keluarga</option>` + opts.map(p => `<option value="${p.id}" ${ui.root === p.id ? "selected" : ""}>Keturunan ${esc(p.name)}</option>`).join("");
+  $("rootSel").value = ui.root;
+}
+function renderStats(){
+  const g = generations(), n = state.people.length;
+  const gens = n ? Math.max(...Object.values(g)) : 0;
+  const alive = state.people.filter(p => !p.death).length;
+  $("stats").innerHTML = `<span><b>${n}</b>anggota</span><span><b>${gens}</b>generasi</span><span><b>${alive}</b>masih hidup</span>`;
+}
+function renderAll(){
+  $("familyName").textContent = state.familyName;
+  document.title = state.familyName + " · Silsilah";
+  document.querySelectorAll("#viewSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === ui.view));
+  $("rootWrap").style.display = ui.view === "tree" ? "" : "none";
+  vp.classList.toggle("hide", ui.view !== "tree");
+  $("list").classList.toggle("show", ui.view === "list");
+  renderRootSel(); renderStats();
+  if (ui.view === "tree") {
+    renderTree();
+    if (!state.people.length) $("stage").innerHTML = `<div style="position:absolute;left:0;top:0;width:${vp.clientWidth}px">${emptyHtml()}</div>`, ui.x = ui.y = 0, ui.k = 1, applyView();
+  } else renderList();
+  if (ui.selected && !byId(ui.selected)) ui.selected = null;
+  renderDrawer();
+}
+renderAll();
+})();
+</script>
+</body>
+</html>
